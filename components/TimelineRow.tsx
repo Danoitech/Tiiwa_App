@@ -1,16 +1,16 @@
 import { eventLabel, eventTimeLabel } from '@/db/queries';
 import type { EventRow } from '@/db/types';
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 import { Droplet, Milk, Moon } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-const palette = {
-  feed: [colors.amberDeep, colors.amber],
-  sleep: [colors.mintDeep, colors.mint],
-  nappy: [colors.peachDeep, colors.peach],
-} as const;
-
 export function TimelineRow({ event, onLongPress }: { event: EventRow; onLongPress?: () => void }) {
+  const { colors } = useTheme();
+  const palette = {
+    feed: [colors.amberDeep, colors.amber],
+    sleep: [colors.mintDeep, colors.mint],
+    nappy: [colors.peachDeep, colors.peach],
+  } as const;
   const [bg, fg] = palette[event.kind];
   const icon =
     event.kind === 'feed' ? <Milk size={13} color={fg} /> :
@@ -18,10 +18,10 @@ export function TimelineRow({ event, onLongPress }: { event: EventRow; onLongPre
     <Droplet size={13} color={fg} />;
 
   return (
-    <Pressable onLongPress={onLongPress} style={styles.row}>
+    <Pressable onLongPress={onLongPress} style={[styles.row, { borderBottomColor: colors.divider }]}>
       <View style={[styles.icon, { backgroundColor: bg }]}>{icon}</View>
-      <Text style={styles.label}>{eventLabel(event)}</Text>
-      <Text style={styles.time}>{eventTimeLabel(event)}</Text>
+      <Text style={[styles.label, { color: colors.ink }]}>{eventLabel(event)}</Text>
+      <Text style={[styles.time, { color: colors.inkDim }]}>{eventTimeLabel(event)}</Text>
     </Pressable>
   );
 }
@@ -33,7 +33,6 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
   },
   icon: {
     width: 28,
@@ -45,10 +44,8 @@ const styles = StyleSheet.create({
   label: {
     flex: 1,
     fontSize: 13,
-    color: colors.ink,
   },
   time: {
     fontSize: 12,
-    color: colors.inkDim,
   },
 });

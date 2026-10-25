@@ -6,14 +6,18 @@ import { useElapsed } from '@/hooks/useElapsed';
 import { pad, TIME_PERIOD_LABELS, TIME_PERIODS, toLocalIso, type TimePeriod } from '@/lib/dates';
 import { useStore } from '@/lib/store';
 import { toast } from '@/lib/toast';
-import { colors } from '@/theme/colors';
+import type { ThemeColors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Droplet, Milk, Minus, Plus, X } from 'lucide-react-native';
 import { useEffect, useState, type ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { NappyColour, NappyType, TimePrecision } from '@/db/types';
 
+type LogStyles = ReturnType<typeof logStyles>;
+
 export default function LogScreen() {
+  const { colors, styles } = useThemedStyles((c) => logStyles(c));
   const { type } = useLocalSearchParams<{ type?: string }>();
   const baby = useBaby();
   const { refresh } = useStore();
@@ -134,7 +138,7 @@ export default function LogScreen() {
               <Text style={styles.label}>Method</Text>
               <View style={styles.grid2}>
                 {(['breast', 'bottle'] as const).map((method) => (
-                  <Choice key={method} label={method} active={feedMethod === method} onPress={() => setFeedMethod(method)} activeBg={colors.amberDeep} activeColor={colors.amber} />
+                  <Choice key={method} label={method} active={feedMethod === method} onPress={() => setFeedMethod(method)} activeBg={colors.amberDeep} activeColor={colors.amber} colors={colors} styles={styles} />
                 ))}
               </View>
               <Text style={styles.label}>Duration</Text>
@@ -147,14 +151,14 @@ export default function LogScreen() {
                 </Pressable>
                 {!feeding && (
                   <View style={styles.stepper}>
-                    <Round onPress={() => setFeedMin((m) => Math.max(0, m - 1))}><Minus size={13} color={colors.ink} /></Round>
+                    <Round onPress={() => setFeedMin((m) => Math.max(0, m - 1))} colors={colors} styles={styles}><Minus size={13} color={colors.ink} /></Round>
                     <Text style={styles.stepLabel}>adjust manually</Text>
-                    <Round onPress={() => setFeedMin((m) => m + 1)}><Plus size={13} color={colors.ink} /></Round>
+                    <Round onPress={() => setFeedMin((m) => m + 1)} colors={colors} styles={styles}><Plus size={13} color={colors.ink} /></Round>
                   </View>
                 )}
               </View>
-              <TimeFields precision={precision} setPrecision={setPrecision} period={period} setPeriod={setPeriod} />
-              <Notes value={notes} onChange={setNotes} />
+              <TimeFields precision={precision} setPrecision={setPrecision} period={period} setPeriod={setPeriod} colors={colors} styles={styles} />
+              <Notes value={notes} onChange={setNotes} colors={colors} styles={styles} />
               <PrimaryButton label="Save feed" onPress={saveFeed} color={colors.amber} disabled={feeding} />
             </>
           ) : (
@@ -162,14 +166,14 @@ export default function LogScreen() {
               <Text style={styles.label}>Type</Text>
               <View style={styles.grid3}>
                 {([['wet', 'Wet'], ['dirty', 'Dirty'], ['both', 'Both']] as const).map(([value, label]) => (
-                  <Choice key={value} label={label} active={nappyType === value} onPress={() => setNappyType(value)} activeBg={colors.peachDeep} activeColor={colors.peach} />
+                  <Choice key={value} label={label} active={nappyType === value} onPress={() => setNappyType(value)} activeBg={colors.peachDeep} activeColor={colors.peach} colors={colors} styles={styles} />
                 ))}
               </View>
               <Text style={styles.label}>Quantity</Text>
               <View style={[styles.stepper, { marginBottom: 18 }]}>
-                <Round onPress={() => setNappyQty((q) => Math.max(1, q - 1))} big><Minus size={16} color={colors.ink} /></Round>
+                <Round onPress={() => setNappyQty((q) => Math.max(1, q - 1))} big colors={colors} styles={styles}><Minus size={16} color={colors.ink} /></Round>
                 <Text style={styles.qty}>{nappyQty}</Text>
-                <Round onPress={() => setNappyQty((q) => q + 1)} big><Plus size={16} color={colors.ink} /></Round>
+                <Round onPress={() => setNappyQty((q) => q + 1)} big colors={colors} styles={styles}><Plus size={16} color={colors.ink} /></Round>
               </View>
               {nappyType !== 'wet' && (
                 <>
@@ -183,8 +187,8 @@ export default function LogScreen() {
                   </View>
                 </>
               )}
-              <TimeFields precision={precision} setPrecision={setPrecision} period={period} setPeriod={setPeriod} />
-              <Notes value={notes} onChange={setNotes} />
+              <TimeFields precision={precision} setPrecision={setPrecision} period={period} setPeriod={setPeriod} colors={colors} styles={styles} />
+              <Notes value={notes} onChange={setNotes} colors={colors} styles={styles} />
               <PrimaryButton label="Save nappy" onPress={saveNappy} color={colors.peach} />
             </>
           )}
@@ -199,11 +203,15 @@ function TimeFields({
   setPrecision,
   period,
   setPeriod,
+  colors,
+  styles,
 }: {
   precision: TimePrecision;
   setPrecision: (v: TimePrecision) => void;
   period: TimePeriod;
   setPeriod: (v: TimePeriod) => void;
+  colors: ThemeColors;
+  styles: LogStyles;
 }) {
   return (
     <>
@@ -228,7 +236,17 @@ function TimeFields({
   );
 }
 
-function Notes({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+function Notes({
+  value,
+  onChange,
+  colors,
+  styles,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  colors: ThemeColors;
+  styles: LogStyles;
+}) {
   return (
     <>
       <Text style={styles.label}>Notes (optional)</Text>
@@ -237,7 +255,23 @@ function Notes({ value, onChange }: { value: string; onChange: (v: string) => vo
   );
 }
 
-function Choice({ label, active, onPress, activeBg, activeColor }: { label: string; active: boolean; onPress: () => void; activeBg: string; activeColor: string }) {
+function Choice({
+  label,
+  active,
+  onPress,
+  activeBg,
+  activeColor,
+  colors,
+  styles,
+}: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+  activeBg: string;
+  activeColor: string;
+  colors: ThemeColors;
+  styles: LogStyles;
+}) {
   return (
     <Pressable onPress={onPress} style={[styles.choice, { backgroundColor: active ? activeBg : colors.card }]}>
       <Text style={[styles.choiceText, { color: active ? activeColor : colors.inkDim, textTransform: 'capitalize' }]}>{label}</Text>
@@ -245,7 +279,19 @@ function Choice({ label, active, onPress, activeBg, activeColor }: { label: stri
   );
 }
 
-function Round({ children, onPress, big }: { children: ReactNode; onPress: () => void; big?: boolean }) {
+function Round({
+  children,
+  onPress,
+  big,
+  colors,
+  styles,
+}: {
+  children: ReactNode;
+  onPress: () => void;
+  big?: boolean;
+  colors: ThemeColors;
+  styles: LogStyles;
+}) {
   return (
     <Pressable onPress={onPress} style={[styles.round, big && { width: 36, height: 36, backgroundColor: colors.card }]}>
       {children}
@@ -253,126 +299,128 @@ function Round({ children, onPress, big }: { children: ReactNode; onPress: () =>
   );
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 18,
-  },
-  title: {
-    fontSize: 17,
-    color: colors.ink,
-    fontWeight: '500',
-  },
-  body: {
-    marginTop: 22,
-    paddingBottom: 32,
-  },
-  label: {
-    fontSize: 12,
-    color: colors.inkDim,
-    marginBottom: 10,
-  },
-  grid2: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 22,
-  },
-  grid3: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 22,
-  },
-  choice: {
-    flex: 1,
-    height: 56,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  choiceText: {
-    fontSize: 13,
-  },
-  timerCard: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  timer: {
-    fontSize: 28,
-    color: colors.ink,
-    fontWeight: '500',
-    fontVariant: ['tabular-nums'],
-    marginBottom: 12,
-  },
-  timerBtn: {
-    width: 150,
-    height: 42,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  timerBtnText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.onAccent,
-  },
-  stepper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    marginTop: 14,
-  },
-  stepLabel: {
-    fontSize: 11,
-    color: colors.inkDim,
-  },
-  round: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.cardSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  qty: {
-    fontSize: 18,
-    color: colors.ink,
-    fontWeight: '500',
-    minWidth: 24,
-    textAlign: 'center',
-  },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 16,
-  },
-  chip: {
-    backgroundColor: colors.card,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  chipText: {
-    fontSize: 12,
-    color: colors.inkDim,
-    textTransform: 'capitalize',
-  },
-  notes: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    height: 48,
-    color: colors.ink,
-    marginBottom: 16,
-  },
-});
+function logStyles(c: ThemeColors) {
+  return StyleSheet.create({
+    screen: {
+      paddingHorizontal: 16,
+      paddingBottom: 16,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      marginBottom: 18,
+    },
+    title: {
+      fontSize: 17,
+      color: c.ink,
+      fontWeight: '500',
+    },
+    body: {
+      marginTop: 22,
+      paddingBottom: 32,
+    },
+    label: {
+      fontSize: 12,
+      color: c.inkDim,
+      marginBottom: 10,
+    },
+    grid2: {
+      flexDirection: 'row',
+      gap: 10,
+      marginBottom: 22,
+    },
+    grid3: {
+      flexDirection: 'row',
+      gap: 10,
+      marginBottom: 22,
+    },
+    choice: {
+      flex: 1,
+      height: 56,
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    choiceText: {
+      fontSize: 13,
+    },
+    timerCard: {
+      backgroundColor: c.card,
+      borderRadius: 16,
+      paddingVertical: 16,
+      paddingHorizontal: 12,
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    timer: {
+      fontSize: 28,
+      color: c.ink,
+      fontWeight: '500',
+      fontVariant: ['tabular-nums'],
+      marginBottom: 12,
+    },
+    timerBtn: {
+      width: 150,
+      height: 42,
+      borderRadius: 999,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    timerBtnText: {
+      fontSize: 13,
+      fontWeight: '500',
+      color: c.onAccent,
+    },
+    stepper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 16,
+      marginTop: 14,
+    },
+    stepLabel: {
+      fontSize: 11,
+      color: c.inkDim,
+    },
+    round: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      backgroundColor: c.cardSoft,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    qty: {
+      fontSize: 18,
+      color: c.ink,
+      fontWeight: '500',
+      minWidth: 24,
+      textAlign: 'center',
+    },
+    chips: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginBottom: 16,
+    },
+    chip: {
+      backgroundColor: c.card,
+      borderRadius: 999,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+    },
+    chipText: {
+      fontSize: 12,
+      color: c.inkDim,
+      textTransform: 'capitalize',
+    },
+    notes: {
+      backgroundColor: c.card,
+      borderRadius: 16,
+      paddingHorizontal: 14,
+      height: 48,
+      color: c.ink,
+      marginBottom: 16,
+    },
+  });
+}

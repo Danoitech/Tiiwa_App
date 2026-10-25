@@ -1,5 +1,5 @@
-import { colors } from '@/theme/colors';
 import { setToastListener } from '@/lib/toast';
+import { useTheme } from '@/theme/ThemeProvider';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export function ToastHost() {
   const [message, setMessage] = useState('');
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -25,8 +26,8 @@ export function ToastHost() {
 
   return (
     <View pointerEvents="none" style={[styles.wrap, { bottom: 78 + insets.bottom }]}>
-      <View style={styles.pill}>
-        <Text style={styles.text}>{message}</Text>
+      <View style={[styles.pill, { backgroundColor: colors.ink }]}>
+        <Text style={[styles.text, { color: colors.bg }]}>{message}</Text>
       </View>
     </View>
   );
@@ -40,13 +41,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pill: {
-    backgroundColor: colors.ink,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 999,
   },
   text: {
-    color: colors.bg,
     fontSize: 12,
   },
 });

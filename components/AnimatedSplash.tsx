@@ -1,11 +1,12 @@
 import { BrandLockup } from '@/components/BrandLockup';
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 import { StyleSheet, View } from 'react-native';
 
 export function AnimatedSplash() {
+  const { colors } = useTheme();
   return (
-    <View style={styles.wrap}>
-      <BrandLockup animated />
+    <View style={[styles.wrap, { backgroundColor: colors.bg }]}>
+      <BrandLockup />
     </View>
   );
 }
@@ -13,7 +14,6 @@ export function AnimatedSplash() {
 const styles = StyleSheet.create({
   wrap: {
     flex: 1,
-    backgroundColor: colors.bg,
     alignItems: 'center',
     justifyContent: 'center',
   },

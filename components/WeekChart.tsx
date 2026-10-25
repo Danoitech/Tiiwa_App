@@ -1,4 +1,4 @@
-import { colors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, G, Line, Rect } from 'react-native-svg';
@@ -20,6 +20,64 @@ export function WeekChart({
   selectedKey?: string;
   onSelect?: (key: string) => void;
 }) {
+  const { colors, styles } = useThemedStyles((c) =>
+    StyleSheet.create({
+      card: {
+        backgroundColor: c.card,
+        borderRadius: 16,
+        paddingHorizontal: 10,
+        paddingTop: 14,
+        paddingBottom: 6,
+        marginBottom: 14,
+      },
+      hitRow: {
+        ...StyleSheet.absoluteFill,
+        flexDirection: 'row',
+      },
+      hit: {
+        flex: 1,
+      },
+      days: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: -18,
+        marginBottom: 8,
+        paddingHorizontal: 18,
+      },
+      dayHit: {
+        width: 28,
+        alignItems: 'center',
+      },
+      day: {
+        fontSize: 10,
+        color: c.inkDim,
+        textAlign: 'center',
+      },
+      daySelected: {
+        color: c.mint,
+        fontWeight: '600',
+      },
+      legend: {
+        flexDirection: 'row',
+        gap: 14,
+        justifyContent: 'center',
+        marginBottom: 8,
+      },
+      legendItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+      },
+      swatch: {
+        width: 7,
+        height: 7,
+      },
+      legendText: {
+        fontSize: 10,
+        color: c.inkDim,
+      },
+    })
+  );
   const [width, setWidth] = useState(0);
   const height = 150;
   const padLeft = 22;
@@ -100,15 +158,25 @@ export function WeekChart({
         ))}
       </View>
       <View style={styles.legend}>
-        <Legend color={colors.amber} label="Feeds" square />
-        <Legend color={colors.peach} label="Nappies" square />
-        <Legend color={colors.mint} label="Sleep (h)" />
+        <Legend color={colors.amber} label="Feeds" square styles={styles} />
+        <Legend color={colors.peach} label="Nappies" square styles={styles} />
+        <Legend color={colors.mint} label="Sleep (h)" styles={styles} />
       </View>
     </View>
   );
 }
 
-function Legend({ color, label, square }: { color: string; label: string; square?: boolean }) {
+function Legend({
+  color,
+  label,
+  square,
+  styles,
+}: {
+  color: string;
+  label: string;
+  square?: boolean;
+  styles: { legendItem: object; swatch: object; legendText: object };
+}) {
   return (
     <View style={styles.legendItem}>
       <View style={[styles.swatch, { backgroundColor: color, borderRadius: square ? 2 : 4 }]} />
@@ -116,60 +184,3 @@ function Legend({ color, label, square }: { color: string; label: string; square
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    paddingHorizontal: 10,
-    paddingTop: 14,
-    paddingBottom: 6,
-    marginBottom: 14,
-  },
-  hitRow: {
-    ...StyleSheet.absoluteFillObject,
-    flexDirection: 'row',
-  },
-  hit: {
-    flex: 1,
-  },
-  days: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: -18,
-    marginBottom: 8,
-    paddingHorizontal: 18,
-  },
-  dayHit: {
-    width: 28,
-    alignItems: 'center',
-  },
-  day: {
-    fontSize: 10,
-    color: colors.inkDim,
-    textAlign: 'center',
-  },
-  daySelected: {
-    color: colors.mint,
-    fontWeight: '600',
-  },
-  legend: {
-    flexDirection: 'row',
-    gap: 14,
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  swatch: {
-    width: 7,
-    height: 7,
-  },
-  legendText: {
-    fontSize: 10,
-    color: colors.inkDim,
-  },
-});

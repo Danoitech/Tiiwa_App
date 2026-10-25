@@ -1,9 +1,10 @@
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 import { Moon } from 'lucide-react-native';
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
 export function BrandMark({ size = 96 }: { size?: number }) {
+  const { colors } = useTheme();
   const scale = useRef(new Animated.Value(1)).current;
   const r = size * 0.34;
 

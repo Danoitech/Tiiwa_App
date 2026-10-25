@@ -1,12 +1,46 @@
 import { PrimaryButton, Screen } from '@/components/ui';
 import { upsertBaby } from '@/db/queries';
 import { useStore } from '@/lib/store';
-import { colors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function ProfileScreen() {
+  const { colors, styles } = useThemedStyles((c) =>
+    StyleSheet.create({
+      wrap: {
+        paddingHorizontal: 24,
+        paddingBottom: 24,
+      },
+      kicker: {
+        fontSize: 12,
+        color: c.inkDim,
+        marginTop: 12,
+      },
+      title: {
+        fontSize: 24,
+        color: c.ink,
+        fontWeight: '500',
+        marginTop: 6,
+        marginBottom: 28,
+      },
+      label: {
+        fontSize: 12,
+        color: c.inkDim,
+        marginBottom: 8,
+      },
+      input: {
+        backgroundColor: c.card,
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        height: 52,
+        fontSize: 16,
+        color: c.ink,
+        marginBottom: 18,
+      },
+    })
+  );
   const { refresh } = useStore();
   const [name, setName] = useState('');
   const [dob, setDob] = useState('');
@@ -52,36 +86,3 @@ export default function ProfileScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 24,
-    paddingBottom: 24,
-  },
-  kicker: {
-    fontSize: 12,
-    color: colors.inkDim,
-    marginTop: 12,
-  },
-  title: {
-    fontSize: 24,
-    color: colors.ink,
-    fontWeight: '500',
-    marginTop: 6,
-    marginBottom: 28,
-  },
-  label: {
-    fontSize: 12,
-    color: colors.inkDim,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    height: 52,
-    fontSize: 16,
-    color: colors.ink,
-    marginBottom: 18,
-  },
-});

@@ -1,4 +1,4 @@
-import { colors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import * as Haptics from 'expo-haptics';
 import { Fingerprint, X } from 'lucide-react-native';
 import { type ReactNode, useState } from 'react';
@@ -36,6 +36,103 @@ export function PinPad({
   disabled?: boolean;
   onInput?: () => void;
 }) {
+  const { colors, styles } = useThemedStyles((c) =>
+    StyleSheet.create({
+      wrap: {
+        alignItems: 'center',
+      },
+      dots: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 20,
+        marginBottom: 8,
+      },
+      dot: {
+        width: 18,
+        height: 18,
+        borderRadius: 9,
+        borderWidth: 1.5,
+        borderColor: c.cardSoft,
+        backgroundColor: 'transparent',
+      },
+      dotFilled: {
+        backgroundColor: c.ink,
+        borderColor: c.ink,
+      },
+      dotError: {
+        borderColor: c.danger,
+        backgroundColor: c.danger,
+      },
+      error: {
+        textAlign: 'center',
+        color: c.danger,
+        fontSize: 12,
+        marginBottom: 18,
+        minHeight: 18,
+      },
+      errorSpacer: {
+        height: 36,
+      },
+      grid: {
+        gap: 16,
+      },
+      row: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 18,
+      },
+      key: {
+        width: 74,
+        height: 74,
+        borderRadius: 37,
+        backgroundColor: c.card,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: c.ink,
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 3,
+      },
+      keyPressed: {
+        opacity: 0.72,
+        transform: [{ scale: 0.97 }],
+      },
+      digit: {
+        fontSize: 26,
+        color: c.ink,
+        fontWeight: '400',
+        fontVariant: ['tabular-nums'],
+        lineHeight: 30,
+      },
+      letters: {
+        fontSize: 8,
+        letterSpacing: 1.6,
+        color: c.inkDim,
+        marginTop: 1,
+      },
+      sideKey: {
+        width: 74,
+        height: 74,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 4,
+      },
+      bioLabel: {
+        fontSize: 10,
+        color: c.inkDim,
+      },
+      deleteGlyph: {
+        width: 24,
+        height: 18,
+        borderRadius: 5,
+        borderWidth: 1.5,
+        borderColor: c.inkDim,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+    })
+  );
   const [value, setValue] = useState('');
 
   function press(digit: string) {
@@ -81,7 +178,7 @@ export function PinPad({
         {ROWS.map((row) => (
           <View key={row[0]} style={styles.row}>
             {row.map((digit) => (
-              <Key key={digit} label={digit} onPress={() => press(digit)}>
+              <Key key={digit} label={digit} onPress={() => press(digit)} styles={styles}>
                 <Text style={styles.digit}>{digit}</Text>
                 {LETTERS[digit] ? <Text style={styles.letters}>{LETTERS[digit]}</Text> : null}
               </Key>
@@ -102,7 +199,7 @@ export function PinPad({
               </>
             ) : null}
           </Pressable>
-          <Key label="0" onPress={() => press('0')}>
+          <Key label="0" onPress={() => press('0')} styles={styles}>
             <Text style={styles.digit}>0</Text>
           </Key>
           <Pressable onPress={backspace} style={styles.sideKey} accessibilityLabel="Delete">
@@ -120,10 +217,12 @@ function Key({
   children,
   onPress,
   label,
+  styles,
 }: {
   children: ReactNode;
   onPress: () => void;
   label: string;
+  styles: { key: object; keyPressed: object };
 }) {
   return (
     <Pressable
@@ -135,99 +234,3 @@ function Key({
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    alignItems: 'center',
-  },
-  dots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 20,
-    marginBottom: 8,
-  },
-  dot: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 1.5,
-    borderColor: '#E4E1D8',
-    backgroundColor: 'transparent',
-  },
-  dotFilled: {
-    backgroundColor: colors.ink,
-    borderColor: colors.ink,
-  },
-  dotError: {
-    borderColor: colors.danger,
-    backgroundColor: colors.danger,
-  },
-  error: {
-    textAlign: 'center',
-    color: colors.danger,
-    fontSize: 12,
-    marginBottom: 18,
-    minHeight: 18,
-  },
-  errorSpacer: {
-    height: 36,
-  },
-  grid: {
-    gap: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 18,
-  },
-  key: {
-    width: 74,
-    height: 74,
-    borderRadius: 37,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: colors.ink,
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
-  },
-  keyPressed: {
-    opacity: 0.72,
-    transform: [{ scale: 0.97 }],
-  },
-  digit: {
-    fontSize: 26,
-    color: colors.ink,
-    fontWeight: '400',
-    fontVariant: ['tabular-nums'],
-    lineHeight: 30,
-  },
-  letters: {
-    fontSize: 8,
-    letterSpacing: 1.6,
-    color: colors.inkDim,
-    marginTop: 1,
-  },
-  sideKey: {
-    width: 74,
-    height: 74,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-  },
-  bioLabel: {
-    fontSize: 10,
-    color: colors.inkDim,
-  },
-  deleteGlyph: {
-    width: 24,
-    height: 18,
-    borderRadius: 5,
-    borderWidth: 1.5,
-    borderColor: colors.inkDim,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

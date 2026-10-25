@@ -4,13 +4,57 @@ import { sendOtp } from '@/auth/otp';
 import { isBiometricsEnabled, setBiometricsEnabled, verifyPin } from '@/auth/pin';
 import { PinPad } from '@/components/PinPad';
 import { Screen } from '@/components/ui';
-import { colors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function UnlockScreen() {
+  const { styles } = useThemedStyles((c) =>
+    StyleSheet.create({
+      wrap: {
+        paddingHorizontal: 28,
+        paddingBottom: 4,
+      },
+      header: {
+        paddingTop: 20,
+      },
+      kicker: {
+        fontSize: 11,
+        letterSpacing: 1.8,
+        color: c.inkDim,
+        fontWeight: '500',
+      },
+      title: {
+        fontSize: 28,
+        color: c.ink,
+        fontWeight: '600',
+        marginTop: 10,
+        marginBottom: 12,
+      },
+      body: {
+        fontSize: 15,
+        color: c.inkDim,
+        lineHeight: 22,
+        maxWidth: 320,
+      },
+      pad: {
+        flex: 1,
+        justifyContent: 'center',
+        minHeight: 0,
+      },
+      forgot: {
+        alignItems: 'center',
+        paddingVertical: 16,
+      },
+      forgotText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: c.mint,
+      },
+    })
+  );
   const insets = useSafeAreaInsets();
   const { unlock, email } = useAuth();
   const [error, setError] = useState<string | null>(null);
@@ -112,46 +156,3 @@ export default function UnlockScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 28,
-    paddingBottom: 4,
-  },
-  header: {
-    paddingTop: 20,
-  },
-  kicker: {
-    fontSize: 11,
-    letterSpacing: 1.8,
-    color: colors.inkDim,
-    fontWeight: '500',
-  },
-  title: {
-    fontSize: 28,
-    color: colors.ink,
-    fontWeight: '600',
-    marginTop: 10,
-    marginBottom: 12,
-  },
-  body: {
-    fontSize: 15,
-    color: colors.inkDim,
-    lineHeight: 22,
-    maxWidth: 320,
-  },
-  pad: {
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 0,
-  },
-  forgot: {
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  forgotText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.mint,
-  },
-});

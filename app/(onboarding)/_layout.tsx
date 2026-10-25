@@ -1,4 +1,4 @@
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 import { Stack } from 'expo-router';
 
 export const unstable_settings = {
@@ -6,6 +6,7 @@ export const unstable_settings = {
 };
 
 export default function OnboardingLayout() {
+  const { colors } = useTheme();
   return (
     <Stack
       screenOptions={{

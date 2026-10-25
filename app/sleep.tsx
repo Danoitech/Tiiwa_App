@@ -5,13 +5,44 @@ import { useElapsed } from '@/hooks/useElapsed';
 import { pad, toLocalIso } from '@/lib/dates';
 import { useStore } from '@/lib/store';
 import { toast } from '@/lib/toast';
-import { colors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { router } from 'expo-router';
 import { Moon } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function SleepScreen() {
+  const { colors, styles } = useThemedStyles((c) =>
+    StyleSheet.create({
+      wrap: {
+        paddingHorizontal: 32,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      icon: {
+        width: 96,
+        height: 96,
+        borderRadius: 48,
+        backgroundColor: c.mintDeep,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+      },
+      body: {
+        fontSize: 13,
+        color: c.inkDim,
+        marginBottom: 24,
+        textAlign: 'center',
+      },
+      timer: {
+        fontSize: 30,
+        color: c.ink,
+        fontWeight: '500',
+        fontVariant: ['tabular-nums'],
+        marginBottom: 26,
+      },
+    })
+  );
   const baby = useBaby();
   const { refresh } = useStore();
   const [startedAt, setStartedAt] = useState<number | null>(null);
@@ -75,33 +106,3 @@ export default function SleepScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  icon: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: colors.mintDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  body: {
-    fontSize: 13,
-    color: colors.inkDim,
-    marginBottom: 24,
-    textAlign: 'center',
-  },
-  timer: {
-    fontSize: 30,
-    color: colors.ink,
-    fontWeight: '500',
-    fontVariant: ['tabular-nums'],
-    marginBottom: 26,
-  },
-});

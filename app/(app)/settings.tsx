@@ -7,20 +7,127 @@ import { seedHistoricalNotes } from '@/db/seed';
 import { useBaby } from '@/hooks/useBaby';
 import { useStore } from '@/lib/store';
 import { toast } from '@/lib/toast';
-import { colors } from '@/theme/colors';
+import { useThemedStyles, type ThemePreference } from '@/theme/ThemeProvider';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { Download, Fingerprint, Lock, Shield, Sparkles, User } from 'lucide-react-native';
+import { ChevronDown, Download, Fingerprint, Lock, Moon, Shield, Sparkles, Sun, User } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+
+const APPEARANCE: { value: ThemePreference; label: string }[] = [
+  { value: 'system', label: 'System' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+];
 
 export default function SettingsScreen() {
   const baby = useBaby();
   const { refresh } = useStore();
   const { email, emailVerified, lock } = useAuth();
+  const { colors, preference, resolved, setPreference, styles } = useThemedStyles((c) =>
+    StyleSheet.create({
+      wrap: {
+        paddingHorizontal: 16,
+      },
+      title: {
+        fontSize: 17,
+        color: c.ink,
+        fontWeight: '500',
+        marginBottom: 16,
+      },
+      row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: c.divider,
+      },
+      rowLast: {
+        borderBottomWidth: 0,
+      },
+      rowLabel: {
+        flex: 1,
+        fontSize: 13,
+        color: c.ink,
+      },
+      edit: {
+        backgroundColor: c.card,
+        borderRadius: 14,
+        padding: 12,
+        marginBottom: 8,
+        gap: 8,
+      },
+      input: {
+        backgroundColor: c.bg,
+        borderRadius: 12,
+        height: 44,
+        paddingHorizontal: 12,
+        color: c.ink,
+      },
+      link: {
+        color: c.mint,
+        fontSize: 13,
+        fontWeight: '500',
+      },
+      menuValue: {
+        fontSize: 13,
+        color: c.inkDim,
+      },
+      menu: {
+        backgroundColor: c.card,
+        borderRadius: 14,
+        marginTop: -4,
+        marginBottom: 8,
+        overflow: 'hidden',
+      },
+      menuItem: {
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: c.divider,
+      },
+      menuItemLast: {
+        borderBottomWidth: 0,
+      },
+      menuItemActive: {
+        backgroundColor: c.mintDeep,
+      },
+      menuItemText: {
+        fontSize: 13,
+        color: c.ink,
+      },
+      menuItemTextActive: {
+        color: c.mint,
+        fontWeight: '500',
+      },
+      privacy: {
+        marginTop: 24,
+        backgroundColor: c.cardSoft,
+        borderRadius: 14,
+        padding: 14,
+      },
+      privacyTitle: {
+        fontSize: 13,
+        color: c.ink,
+        fontWeight: '500',
+      },
+      privacyBody: {
+        fontSize: 12,
+        color: c.inkDim,
+        lineHeight: 18,
+      },
+      lockNow: {
+        color: c.inkDim,
+        fontSize: 13,
+        textAlign: 'center',
+      },
+    })
+  );
   const [bio, setBio] = useState(false);
   const [bioLabel, setBioLabel] = useState('Face ID');
   const [editing, setEditing] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [name, setName] = useState('');
   const [dob, setDob] = useState('');
 
@@ -106,6 +213,42 @@ export default function SettingsScreen() {
           </View>
         ) : null}
 
+        <Pressable style={styles.row} onPress={() => setMenuOpen((open) => !open)}>
+          {resolved === 'dark' ? <Moon size={16} color={colors.inkDim} /> : <Sun size={16} color={colors.inkDim} />}
+          <Text style={styles.rowLabel}>Appearance</Text>
+          <Text style={styles.menuValue}>
+            {APPEARANCE.find((option) => option.value === preference)?.label ?? 'System'}
+          </Text>
+          <ChevronDown
+            size={16}
+            color={colors.inkDim}
+            style={{ transform: [{ rotate: menuOpen ? '180deg' : '0deg' }] }}
+          />
+        </Pressable>
+        {menuOpen ? (
+          <View style={styles.menu}>
+            {APPEARANCE.map((option, index) => {
+              const active = preference === option.value;
+              return (
+                <Pressable
+                  key={option.value}
+                  onPress={() => {
+                    setPreference(option.value);
+                    setMenuOpen(false);
+                  }}
+                  style={[
+                    styles.menuItem,
+                    index === APPEARANCE.length - 1 && styles.menuItemLast,
+                    active && styles.menuItemActive,
+                  ]}
+                >
+                  <Text style={[styles.menuItemText, active && styles.menuItemTextActive]}>{option.label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        ) : null}
+
         <Pressable style={styles.row} onPress={loadDemo}>
           <Sparkles size={16} color={colors.inkDim} />
           <Text style={styles.rowLabel}>Load Tiwatayo demo data</Text>
@@ -146,71 +289,3 @@ export default function SettingsScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 16,
-  },
-  title: {
-    fontSize: 17,
-    color: colors.ink,
-    fontWeight: '500',
-    marginBottom: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
-  },
-  rowLast: {
-    borderBottomWidth: 0,
-  },
-  rowLabel: {
-    flex: 1,
-    fontSize: 13,
-    color: colors.ink,
-  },
-  edit: {
-    backgroundColor: colors.card,
-    borderRadius: 14,
-    padding: 12,
-    marginBottom: 8,
-    gap: 8,
-  },
-  input: {
-    backgroundColor: colors.bg,
-    borderRadius: 12,
-    height: 44,
-    paddingHorizontal: 12,
-    color: colors.ink,
-  },
-  link: {
-    color: colors.mint,
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  privacy: {
-    marginTop: 24,
-    backgroundColor: colors.cardSoft,
-    borderRadius: 14,
-    padding: 14,
-  },
-  privacyTitle: {
-    fontSize: 13,
-    color: colors.ink,
-    fontWeight: '500',
-  },
-  privacyBody: {
-    fontSize: 12,
-    color: colors.inkDim,
-    lineHeight: 18,
-  },
-  lockNow: {
-    color: colors.inkDim,
-    fontSize: 13,
-    textAlign: 'center',
-  },
-});

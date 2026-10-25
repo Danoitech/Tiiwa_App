@@ -1,13 +1,15 @@
 import { useAuth } from '@/auth/AuthProvider';
 import { sendOtp } from '@/auth/otp';
 import { Screen } from '@/components/ui';
-import { colors } from '@/theme/colors';
+import type { ThemeColors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { router } from 'expo-router';
 import { Mail } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function EmailScreen() {
+  const { colors, styles } = useThemedStyles((c) => emailStyles(c));
   const { setEmail } = useAuth();
   const [email, setEmailValue] = useState('');
   const [busy, setBusy] = useState(false);
@@ -75,7 +77,8 @@ export default function EmailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function emailStyles(c: ThemeColors) {
+  return StyleSheet.create({
   wrap: {
     paddingHorizontal: 28,
     paddingBottom: 24,
@@ -87,19 +90,19 @@ const styles = StyleSheet.create({
   kicker: {
     fontSize: 11,
     letterSpacing: 1.8,
-    color: colors.inkDim,
+    color: c.inkDim,
     fontWeight: '500',
   },
   title: {
     fontSize: 28,
-    color: colors.ink,
+    color: c.ink,
     fontWeight: '600',
     marginTop: 10,
     marginBottom: 12,
   },
   body: {
     fontSize: 15,
-    color: colors.inkDim,
+    color: c.inkDim,
     lineHeight: 22,
     maxWidth: 320,
   },
@@ -110,8 +113,8 @@ const styles = StyleSheet.create({
     height: 56,
     paddingHorizontal: 20,
     borderRadius: 999,
-    backgroundColor: colors.card,
-    shadowColor: colors.ink,
+    backgroundColor: c.card,
+    shadowColor: c.ink,
     shadowOpacity: 0.06,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 2 },
@@ -120,11 +123,11 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: colors.ink,
+    color: c.ink,
     paddingVertical: 0,
   },
   error: {
-    color: colors.danger,
+    color: c.danger,
     fontSize: 12,
     marginTop: 10,
   },
@@ -133,18 +136,19 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.mint,
+    backgroundColor: c.mint,
     marginTop: 16,
   },
   sendDisabled: {
-    backgroundColor: colors.cardSoft,
+    backgroundColor: c.cardSoft,
   },
   sendText: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.onAccent,
+    color: c.onAccent,
   },
   sendTextDisabled: {
-    color: colors.ink,
+    color: c.ink,
   },
-});
+  });
+}

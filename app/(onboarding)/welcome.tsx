@@ -2,13 +2,15 @@ import { BrandMark } from '@/components/BrandMark';
 import { Screen } from '@/components/ui';
 import { upsertBaby } from '@/db/queries';
 import { useStore } from '@/lib/store';
-import { colors } from '@/theme/colors';
+import type { ThemeColors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { router } from 'expo-router';
 import { ChevronRight, Droplet, Milk, Moon } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function WelcomeScreen() {
+  const { colors, styles } = useThemedStyles((c) => welcomeStyles(c));
   const { refresh } = useStore();
   const [step, setStep] = useState(0);
   const [babyName, setBabyName] = useState('Tiwatayo');
@@ -110,130 +112,132 @@ export default function WelcomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  skipWrap: {
-    height: 28,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  skip: {
-    fontSize: 12,
-    color: colors.inkDim,
-  },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 22,
-    paddingHorizontal: 8,
-  },
-  icons: {
-    flexDirection: 'row',
-    gap: 14,
-    marginBottom: 4,
-  },
-  tile: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tileDropped: {
-    marginTop: 18,
-  },
-  timerCard: {
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    paddingVertical: 18,
-    paddingHorizontal: 28,
-    alignItems: 'center',
-    gap: 12,
-    shadowColor: colors.ink,
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-  },
-  timer: {
-    fontSize: 22,
-    fontWeight: '500',
-    color: colors.ink,
-    fontVariant: ['tabular-nums'],
-  },
-  stop: {
-    height: 34,
-    width: 120,
-    borderRadius: 999,
-    backgroundColor: colors.danger,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stopText: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.onAccent,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.ink,
-    textAlign: 'center',
-    lineHeight: 24,
-    maxWidth: 280,
-  },
-  body: {
-    fontSize: 13,
-    color: colors.inkDim,
-    textAlign: 'center',
-    lineHeight: 20,
-    maxWidth: 260,
-    marginTop: -10,
-  },
-  input: {
-    width: 220,
-    height: 46,
-    borderRadius: 14,
-    backgroundColor: colors.card,
-    borderWidth: 1.5,
-    borderColor: colors.cardSoft,
-    color: colors.ink,
-    fontSize: 15,
-    textAlign: 'center',
-  },
-  dots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 18,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 999,
-    backgroundColor: colors.cardSoft,
-  },
-  dotActive: {
-    width: 18,
-    backgroundColor: colors.mint,
-  },
-  next: {
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: colors.mint,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    gap: 6,
-  },
-  nextText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.onAccent,
-  },
-});
+function welcomeStyles(c: ThemeColors) {
+  return StyleSheet.create({
+    wrap: {
+      paddingHorizontal: 20,
+      paddingBottom: 20,
+    },
+    skipWrap: {
+      height: 28,
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+    },
+    skip: {
+      fontSize: 12,
+      color: c.inkDim,
+    },
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 22,
+      paddingHorizontal: 8,
+    },
+    icons: {
+      flexDirection: 'row',
+      gap: 14,
+      marginBottom: 4,
+    },
+    tile: {
+      width: 60,
+      height: 60,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    tileDropped: {
+      marginTop: 18,
+    },
+    timerCard: {
+      backgroundColor: c.card,
+      borderRadius: 20,
+      paddingVertical: 18,
+      paddingHorizontal: 28,
+      alignItems: 'center',
+      gap: 12,
+      shadowColor: c.ink,
+      shadowOpacity: 0.08,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 3,
+    },
+    timer: {
+      fontSize: 22,
+      fontWeight: '500',
+      color: c.ink,
+      fontVariant: ['tabular-nums'],
+    },
+    stop: {
+      height: 34,
+      width: 120,
+      borderRadius: 999,
+      backgroundColor: c.danger,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    stopText: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: c.onAccent,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: c.ink,
+      textAlign: 'center',
+      lineHeight: 24,
+      maxWidth: 280,
+    },
+    body: {
+      fontSize: 13,
+      color: c.inkDim,
+      textAlign: 'center',
+      lineHeight: 20,
+      maxWidth: 260,
+      marginTop: -10,
+    },
+    input: {
+      width: 220,
+      height: 46,
+      borderRadius: 14,
+      backgroundColor: c.card,
+      borderWidth: 1.5,
+      borderColor: c.cardSoft,
+      color: c.ink,
+      fontSize: 15,
+      textAlign: 'center',
+    },
+    dots: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 6,
+      marginBottom: 18,
+    },
+    dot: {
+      width: 6,
+      height: 6,
+      borderRadius: 999,
+      backgroundColor: c.cardSoft,
+    },
+    dotActive: {
+      width: 18,
+      backgroundColor: c.mint,
+    },
+    next: {
+      height: 48,
+      borderRadius: 16,
+      backgroundColor: c.mint,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      gap: 6,
+    },
+    nextText: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: c.onAccent,
+    },
+  });
+}

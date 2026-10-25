@@ -1,5 +1,5 @@
 import type { DayStats } from '@/db/queries';
-import { colors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
@@ -13,6 +13,74 @@ function depthForHour(hour: number, bands: DayStats['sleepBands']) {
 }
 
 export function RhythmChart({ stats }: { stats: DayStats }) {
+  const { colors, styles } = useThemedStyles((c) =>
+    StyleSheet.create({
+      card: {
+        backgroundColor: c.card,
+        borderRadius: 16,
+        paddingHorizontal: 12,
+        paddingTop: 14,
+        paddingBottom: 10,
+        marginBottom: 16,
+      },
+      title: {
+        fontSize: 12,
+        color: c.inkDim,
+        marginBottom: 6,
+      },
+      dots: {
+        height: 14,
+        marginTop: 2,
+        position: 'relative',
+      },
+      feedDot: {
+        position: 'absolute',
+        top: 0,
+        width: 7,
+        height: 7,
+        borderRadius: 4,
+        backgroundColor: c.amber,
+        marginLeft: -3.5,
+      },
+      nappyDot: {
+        position: 'absolute',
+        bottom: 0,
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: c.peach,
+        marginLeft: -3,
+      },
+      axis: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 2,
+      },
+      axisText: {
+        fontSize: 9,
+        color: c.inkDim,
+      },
+      legend: {
+        flexDirection: 'row',
+        gap: 14,
+        marginTop: 8,
+      },
+      legendItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+      },
+      swatch: {
+        width: 7,
+        height: 7,
+        borderRadius: 4,
+      },
+      legendText: {
+        fontSize: 10,
+        color: c.inkDim,
+      },
+    })
+  );
   const [width, setWidth] = useState(0);
   const hours = Array.from({ length: 24 }, (_, h) => h);
   const values = hours.map((h) => depthForHour(h, stats.sleepBands));
@@ -60,15 +128,23 @@ export function RhythmChart({ stats }: { stats: DayStats }) {
         <Text style={styles.axisText}>12am</Text>
       </View>
       <View style={styles.legend}>
-        <Legend color={colors.mint} label="Sleep depth" />
-        <Legend color={colors.amber} label="Feed" />
-        <Legend color={colors.peach} label="Nappy" />
+        <Legend color={colors.mint} label="Sleep depth" styles={styles} />
+        <Legend color={colors.amber} label="Feed" styles={styles} />
+        <Legend color={colors.peach} label="Nappy" styles={styles} />
       </View>
     </View>
   );
 }
 
-function Legend({ color, label }: { color: string; label: string }) {
+function Legend({
+  color,
+  label,
+  styles,
+}: {
+  color: string;
+  label: string;
+  styles: { legendItem: object; swatch: object; legendText: object };
+}) {
   return (
     <View style={styles.legendItem}>
       <View style={[styles.swatch, { backgroundColor: color }]} />
@@ -76,70 +152,3 @@ function Legend({ color, label }: { color: string; label: string }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingTop: 14,
-    paddingBottom: 10,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 12,
-    color: colors.inkDim,
-    marginBottom: 6,
-  },
-  dots: {
-    height: 14,
-    marginTop: 2,
-    position: 'relative',
-  },
-  feedDot: {
-    position: 'absolute',
-    top: 0,
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: colors.amber,
-    marginLeft: -3.5,
-  },
-  nappyDot: {
-    position: 'absolute',
-    bottom: 0,
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.peach,
-    marginLeft: -3,
-  },
-  axis: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 2,
-  },
-  axisText: {
-    fontSize: 9,
-    color: colors.inkDim,
-  },
-  legend: {
-    flexDirection: 'row',
-    gap: 14,
-    marginTop: 8,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  swatch: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-  },
-  legendText: {
-    fontSize: 10,
-    color: colors.inkDim,
-  },
-});

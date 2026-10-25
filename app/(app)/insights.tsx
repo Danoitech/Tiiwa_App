@@ -5,7 +5,7 @@ import { deleteEvent, getEventsForDate, statsFromEvents } from '@/db/queries';
 import { useBaby } from '@/hooks/useBaby';
 import { addDays, dateKey, formatShortDate, parseLocalIso, startOfDay } from '@/lib/dates';
 import { useStore } from '@/lib/store';
-import { colors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -13,6 +13,7 @@ import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function InsightsScreen() {
+  const { colors, styles } = useThemedStyles(insightStyles);
   const baby = useBaby();
   const { tick, refresh } = useStore();
   const [day, setDay] = useState(() => startOfDay(new Date()));
@@ -83,9 +84,9 @@ export default function InsightsScreen() {
           onSelect={(key) => setDay(startOfDay(parseLocalIso(`${key}T00:00:00`)))}
         />
         <View style={styles.avgs}>
-          <Avg value={averages.feeds.toFixed(1)} label="avg feeds" color={colors.amber} />
-          <Avg value={`${averages.sleep.toFixed(1)}h`} label="avg sleep" color={colors.mint} />
-          <Avg value={averages.nappies.toFixed(1)} label="avg nappies" color={colors.peach} />
+          <Avg value={averages.feeds.toFixed(1)} label="avg feeds" color={colors.amber} styles={styles} />
+          <Avg value={`${averages.sleep.toFixed(1)}h`} label="avg sleep" color={colors.mint} styles={styles} />
+          <Avg value={averages.nappies.toFixed(1)} label="avg nappies" color={colors.peach} styles={styles} />
         </View>
         <Text style={styles.noteText}>
           Tracking totals only, not medical advice. Sleep hours are what you logged.
@@ -118,7 +119,7 @@ export default function InsightsScreen() {
   );
 }
 
-function Avg({ value, label, color }: { value: string; label: string; color: string }) {
+function Avg({ value, label, color, styles }: { value: string; label: string; color: string; styles: ReturnType<typeof insightStyles> }) {
   return (
     <View style={styles.avg}>
       <Text style={[styles.avgValue, { color }]}>{value}</Text>
@@ -127,74 +128,76 @@ function Avg({ value, label, color }: { value: string; label: string; color: str
   );
 }
 
-const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: 16,
-  },
-  log: {
-    flex: 1,
-  },
-  logContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-  },
-  title: {
-    fontSize: 17,
-    color: colors.ink,
-    fontWeight: '500',
-    marginBottom: 14,
-  },
-  dateRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginTop: 14,
-    marginBottom: 8,
-  },
-  dateLabel: {
-    flex: 1,
-    fontSize: 14,
-    color: colors.ink,
-    fontWeight: '500',
-  },
-  empty: {
-    color: colors.inkDim,
-    fontSize: 13,
-    marginTop: 8,
-  },
-  hint: {
-    fontSize: 11,
-    color: colors.inkDim,
-    marginTop: 12,
-  },
-  sub: {
-    fontSize: 12,
-    color: colors.inkDim,
-    marginBottom: 10,
-  },
-  avgs: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 10,
-  },
-  avg: {
-    flex: 1,
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  avgValue: {
-    fontSize: 15,
-    fontWeight: '500',
-  },
-  avgLabel: {
-    fontSize: 9,
-    color: colors.inkDim,
-  },
-  noteText: {
-    fontSize: 11,
-    color: colors.inkDim,
-    lineHeight: 16,
-  },
-});
+function insightStyles(c: { ink: string; inkDim: string; card: string }) {
+  return StyleSheet.create({
+    header: {
+      paddingHorizontal: 16,
+    },
+    log: {
+      flex: 1,
+    },
+    logContent: {
+      paddingHorizontal: 16,
+      paddingBottom: 24,
+    },
+    title: {
+      fontSize: 17,
+      color: c.ink,
+      fontWeight: '500',
+      marginBottom: 14,
+    },
+    dateRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      marginTop: 14,
+      marginBottom: 8,
+    },
+    dateLabel: {
+      flex: 1,
+      fontSize: 14,
+      color: c.ink,
+      fontWeight: '500',
+    },
+    empty: {
+      color: c.inkDim,
+      fontSize: 13,
+      marginTop: 8,
+    },
+    hint: {
+      fontSize: 11,
+      color: c.inkDim,
+      marginTop: 12,
+    },
+    sub: {
+      fontSize: 12,
+      color: c.inkDim,
+      marginBottom: 10,
+    },
+    avgs: {
+      flexDirection: 'row',
+      gap: 8,
+      marginBottom: 10,
+    },
+    avg: {
+      flex: 1,
+      backgroundColor: c.card,
+      borderRadius: 12,
+      paddingVertical: 10,
+      alignItems: 'center',
+    },
+    avgValue: {
+      fontSize: 15,
+      fontWeight: '500',
+    },
+    avgLabel: {
+      fontSize: 9,
+      color: c.inkDim,
+    },
+    noteText: {
+      fontSize: 11,
+      color: c.inkDim,
+      lineHeight: 16,
+    },
+  });
+}

@@ -2,12 +2,47 @@ import { alertBiometricFailure, biometricLabel, canUseBiometrics, getBiometricKi
 import { setBiometricsEnabled, setPin } from '@/auth/pin';
 import { PinPad } from '@/components/PinPad';
 import { Screen } from '@/components/ui';
-import { colors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
 export default function SetPinScreen() {
+  const { styles } = useThemedStyles((c) =>
+    StyleSheet.create({
+      wrap: {
+        paddingHorizontal: 28,
+        paddingBottom: 12,
+      },
+      header: {
+        paddingTop: 20,
+      },
+      kicker: {
+        fontSize: 11,
+        letterSpacing: 1.8,
+        color: c.inkDim,
+        fontWeight: '500',
+      },
+      title: {
+        fontSize: 28,
+        color: c.ink,
+        fontWeight: '600',
+        marginTop: 10,
+        marginBottom: 12,
+      },
+      body: {
+        fontSize: 15,
+        color: c.inkDim,
+        lineHeight: 22,
+        maxWidth: 320,
+      },
+      pad: {
+        flex: 1,
+        justifyContent: 'center',
+        paddingBottom: 8,
+      },
+    })
+  );
   const [first, setFirst] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [bioLabel, setBioLabel] = useState('Face ID');
@@ -81,37 +116,3 @@ export default function SetPinScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 28,
-    paddingBottom: 12,
-  },
-  header: {
-    paddingTop: 20,
-  },
-  kicker: {
-    fontSize: 11,
-    letterSpacing: 1.8,
-    color: colors.inkDim,
-    fontWeight: '500',
-  },
-  title: {
-    fontSize: 28,
-    color: colors.ink,
-    fontWeight: '600',
-    marginTop: 10,
-    marginBottom: 12,
-  },
-  body: {
-    fontSize: 15,
-    color: colors.inkDim,
-    lineHeight: 22,
-    maxWidth: 320,
-  },
-  pad: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingBottom: 8,
-  },
-});

@@ -2,7 +2,7 @@ import { AuthProvider, useAuth } from '@/auth/AuthProvider';
 import { AnimatedSplash } from '@/components/AnimatedSplash';
 import { ToastHost } from '@/components/ToastHost';
 import { StoreProvider } from '@/lib/store';
-import { colors } from '@/theme/colors';
+import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -23,6 +23,7 @@ export const unstable_settings = {
 
 function RootNav() {
   const { status } = useAuth();
+  const { colors, resolved } = useTheme();
   const [held, setHeld] = useState(false);
 
   useEffect(() => {
@@ -34,7 +35,7 @@ function RootNav() {
   if (status === 'loading' || !held) {
     return (
       <>
-        <StatusBar style="dark" />
+        <StatusBar style={resolved === 'dark' ? 'light' : 'dark'} />
         <AnimatedSplash />
       </>
     );
@@ -42,7 +43,7 @@ function RootNav() {
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style={resolved === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
         <Stack.Protected guard={status === 'needs-onboarding'}>
           <Stack.Screen name="(onboarding)" />
@@ -66,9 +67,11 @@ function RootNav() {
 export default function RootLayout() {
   return (
     <StoreProvider>
-      <AuthProvider>
-        <RootNav />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <RootNav />
+        </AuthProvider>
+      </ThemeProvider>
     </StoreProvider>
   );
 }

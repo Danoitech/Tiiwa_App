@@ -1,9 +1,10 @@
 import { BrandMark } from '@/components/BrandMark';
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 
 export function BrandLockup({ animated = false }: { animated?: boolean }) {
+  const { colors } = useTheme();
   const fade = useRef(new Animated.Value(animated ? 0 : 1)).current;
   const lift = useRef(new Animated.Value(animated ? 10 : 0)).current;
   const ticks = useRef(new Animated.Value(animated ? 0 : 1)).current;
@@ -23,8 +24,8 @@ export function BrandLockup({ animated = false }: { animated?: boolean }) {
     <View style={styles.wrap}>
       <BrandMark size={104} />
       <Animated.View style={[styles.copy, { opacity: fade, transform: [{ translateY: lift }] }]}>
-        <Text style={styles.title}>Tiiwa</Text>
-        <Text style={styles.tagline}>for the hours between sleeps</Text>
+        <Text style={[styles.title, { color: colors.ink }]}>Tiiwa</Text>
+        <Text style={[styles.tagline, { color: colors.inkDim }]}>for the hours between sleeps</Text>
       </Animated.View>
       <Animated.View style={[styles.ticks, { opacity: ticks }]}>
         <View style={[styles.tick, { backgroundColor: colors.amber }]} />
@@ -46,12 +47,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     fontWeight: '600',
-    color: colors.ink,
     letterSpacing: 4,
   },
   tagline: {
     fontSize: 13,
-    color: colors.inkDim,
     marginTop: 8,
     letterSpacing: 0.2,
   },

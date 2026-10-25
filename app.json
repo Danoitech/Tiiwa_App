@@ -6,21 +6,30 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tiiwa",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
+      "userInterfaceStyle": "automatic",
+      "bundleIdentifier": "com.boydotos.tiiwa",
       "supportsTablet": true,
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Unlock Tiiwa to open the baby care log on this phone."
+        "NSFaceIDUsageDescription": "Unlock Tiiwa to open the baby care log on this phone.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
+      "userInterfaceStyle": "automatic",
+      "package": "com.boydotos.tiiwa",
       "adaptiveIcon": {
         "backgroundColor": "#FAFAF6",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -54,10 +63,23 @@
         {
           "faceIDPermission": "Unlock Tiiwa to open the baby care log on this phone."
         }
-      ]
+      ],
+      "expo-dev-client"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "headers": {
+          "Cross-Origin-Embedder-Policy": "credentialless",
+          "Cross-Origin-Opener-Policy": "same-origin"
+        }
+      },
+      "eas": {
+        "projectId": "c19771ab-6e40-4e86-a73e-befb867711a9"
+      }
+    },
+    "owner": "boydotos"
   }
 }

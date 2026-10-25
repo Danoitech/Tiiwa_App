@@ -1,4 +1,4 @@
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 import { Tabs } from 'expo-router';
 import { Activity, Home, Settings } from 'lucide-react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -12,6 +12,7 @@ function TabBar({
   navigation: { navigate: (name: string) => void };
 }) {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
   const icons = [
     { name: 'index', icon: Home, label: 'Home' },
     { name: 'insights', icon: Activity, label: 'Insights' },
@@ -19,7 +20,7 @@ function TabBar({
   ] as const;
 
   return (
-    <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+    <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, 8), backgroundColor: colors.bg }]}>
       {state.routes.map((route, index) => {
         const meta = icons.find((item) => item.name === route.name);
         if (!meta) return null;
@@ -30,7 +31,7 @@ function TabBar({
             key={route.key}
             accessibilityLabel={meta.label}
             onPress={() => navigation.navigate(route.name)}
-            style={[styles.dot, active && styles.dotActive]}
+            style={[styles.dot, active && { backgroundColor: colors.divider }]}
           >
             <Icon size={18} color={active ? colors.ink : colors.inkDim} />
           </Pressable>
@@ -61,7 +62,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingTop: 8,
-    backgroundColor: colors.bg,
   },
   dot: {
     width: 40,
@@ -69,8 +69,5 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  dotActive: {
-    backgroundColor: 'rgba(74,78,81,0.08)',
   },
 });

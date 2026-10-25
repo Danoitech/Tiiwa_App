@@ -3,7 +3,8 @@ import { sendOtp, verifyOtp } from '@/auth/otp';
 import { setPin } from '@/auth/pin';
 import { PinPad } from '@/components/PinPad';
 import { GhostButton, PrimaryButton, Screen } from '@/components/ui';
-import { colors } from '@/theme/colors';
+import type { ThemeColors } from '@/theme/colors';
+import { useThemedStyles } from '@/theme/ThemeProvider';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
@@ -13,6 +14,7 @@ function asString(value: string | string[] | undefined) {
 }
 
 export function OtpScreen({ purpose }: { purpose: 'onboarding' | 'recovery' }) {
+  const { colors, styles } = useThemedStyles((c) => otpStyles(c));
   const params = useLocalSearchParams<{ email?: string; devCode?: string }>();
   const email = asString(params.email).trim().toLowerCase();
   const devCode = asString(params.devCode);
@@ -120,55 +122,57 @@ export function OtpScreen({ purpose }: { purpose: 'onboarding' | 'recovery' }) {
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 24,
-    paddingBottom: 24,
-  },
-  kicker: {
-    fontSize: 12,
-    color: colors.inkDim,
-    marginTop: 12,
-  },
-  title: {
-    fontSize: 24,
-    color: colors.ink,
-    fontWeight: '500',
-    marginTop: 6,
-    marginBottom: 10,
-  },
-  body: {
-    fontSize: 14,
-    color: colors.inkDim,
-    lineHeight: 20,
-    marginBottom: 18,
-  },
-  input: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    height: 52,
-    fontSize: 22,
-    letterSpacing: 8,
-    color: colors.ink,
-    marginBottom: 18,
-    textAlign: 'center',
-    fontVariant: ['tabular-nums'],
-  },
-  error: {
-    color: colors.danger,
-    fontSize: 12,
-    marginBottom: 12,
-  },
-  dev: {
-    backgroundColor: colors.cardSoft,
-    borderRadius: 14,
-    padding: 12,
-    marginBottom: 16,
-  },
-  devText: {
-    color: colors.ink,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-});
+function otpStyles(c: ThemeColors) {
+  return StyleSheet.create({
+    wrap: {
+      paddingHorizontal: 24,
+      paddingBottom: 24,
+    },
+    kicker: {
+      fontSize: 12,
+      color: c.inkDim,
+      marginTop: 12,
+    },
+    title: {
+      fontSize: 24,
+      color: c.ink,
+      fontWeight: '500',
+      marginTop: 6,
+      marginBottom: 10,
+    },
+    body: {
+      fontSize: 14,
+      color: c.inkDim,
+      lineHeight: 20,
+      marginBottom: 18,
+    },
+    input: {
+      backgroundColor: c.card,
+      borderRadius: 16,
+      paddingHorizontal: 16,
+      height: 52,
+      fontSize: 22,
+      letterSpacing: 8,
+      color: c.ink,
+      marginBottom: 18,
+      textAlign: 'center',
+      fontVariant: ['tabular-nums'],
+    },
+    error: {
+      color: c.danger,
+      fontSize: 12,
+      marginBottom: 12,
+    },
+    dev: {
+      backgroundColor: c.cardSoft,
+      borderRadius: 14,
+      padding: 12,
+      marginBottom: 16,
+    },
+    devText: {
+      color: c.ink,
+      fontSize: 13,
+      lineHeight: 18,
+    },
+  });
+}

@@ -1,4 +1,4 @@
-import { colors } from '@/theme/colors';
+import { useTheme } from '@/theme/ThemeProvider';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -15,8 +15,9 @@ export function Segmented({
   activeBg: string;
   activeColor: string;
 }) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.wrap}>
+    <View style={[styles.wrap, { backgroundColor: colors.card }]}>
       {options.map((option) => {
         const active = option.value === value;
         return (
@@ -37,7 +38,6 @@ export function Segmented({
 const styles = StyleSheet.create({
   wrap: {
     flexDirection: 'row',
-    backgroundColor: colors.card,
     borderRadius: 14,
     padding: 4,
   },
