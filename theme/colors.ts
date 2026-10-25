@@ -50,4 +50,4 @@ export const darkColors: ThemeColors = {
 };
 
 /** Default / light tokens. Screens should read live colors from `useTheme()`. */
-export const colors = lightColors;
+export const colors = lightColors

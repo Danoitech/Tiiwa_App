@@ -54,8 +54,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (next === 'background') {
         backgroundedAt = Date.now();
       }
-      if (next === 'active' && backgroundedAt && Date.now() - backgroundedAt > 2 * 60 * 1000) {
-        setStatus((current) => (current === 'ready' ? 'locked' : current));
+      if (next === 'active' && backgroundedAt) {
+        const away = Date.now() - backgroundedAt;
+        // The Face ID sheet also sends the app inactive -> active; a stale timestamp would re-lock after every scan.
+        backgroundedAt = null;
+        if (away > 2 * 60 * 1000) {
+          setStatus((current) => (current === 'ready' ? 'locked' : current));
+        }
       }
     });
     return () => sub.remove();
