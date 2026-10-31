@@ -172,6 +172,8 @@ async function seedUnknownDay(babyId: number, date: string) {
 }
 
 export async function seedHistoricalNotes(babyId: number, options?: { force?: boolean }) {
+  // Release builds (TestFlight, store) start empty; demo data is only loaded from Settings.
+  if (!options?.force && !__DEV__) return;
   const version = await getMeta('demo_seed');
   if (!options?.force && version === DEMO_SEED_VERSION) return;
 
